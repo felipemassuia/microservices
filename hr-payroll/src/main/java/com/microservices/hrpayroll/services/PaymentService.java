@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.microservices.hrpayroll.entities.Payment;
 import com.microservices.hrpayroll.entities.Worker;
 import com.microservices.hrpayroll.feignclients.WorkerFeignClient;
+import com.microservices.hrpayroll.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class PaymentService {
@@ -18,8 +19,10 @@ public class PaymentService {
         
         Worker worker = workerFeignClient.findById(id).getBody();
 
-		return new Payment(worker.getName(), worker.getDailyIncome(), days);
-
+        if(worker == null){
+            throw new ObjectNotFoundException("Object not found");
+        }
+        return new Payment(worker.getName(), worker.getDailyIncome(), days);
     }
 
 }
